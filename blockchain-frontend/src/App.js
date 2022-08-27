@@ -11,7 +11,7 @@ function App() {
         <Form>
           <Form.Group className="mb-12" controlId="formBasicEmail">
             <Form.Label>Premium</Form.Label>
-            <Form.Control type="premium" placeholder="Enter premium amount" />
+            <Form.Control type="number" placeholder="Enter premium amount" />
           </Form.Group>
           <br />
           <label for="exampleDataList" className="form-label">Select District</label>
