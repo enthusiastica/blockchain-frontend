@@ -48,6 +48,7 @@ async function connect() {
 		// let op2 = await contract.c_day();
 		// console.log("setDay: ", op1);
 		// console.log("c_day : ", op2);
+		alert("done");
 	} catch (e) {
 		// alert(e)
 		console.log("error: ", e);
