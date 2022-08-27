@@ -63,7 +63,7 @@ function App() {
 	}
 
 	function requestClaim() {
-		contract.c_day()
+		contract.claimInsurance()
 			.then(d => {
 				console.log(d)
 				hideAll();
