@@ -18,12 +18,24 @@
 }
 
 .child {
-  transform       : translate(0, -50px);
+  /* transform       : translate(0, -50px); */
   background-color: white;
   box-shadow      : 0px 0px 12px -5px #00000080;
   border-radius   : 9px;
+  width           : 55vw;
+  zoom            : 1.1;
 }
 
 .child h3 {
-  font-weight: 600;
+  font-weight: 500;
+  font-size  : 1.5em;
+}
+
+.logo {
+  width : 55%;
+  margin: 0 auto;
+}
+
+.logo img {
+  width: 60%;
 }
