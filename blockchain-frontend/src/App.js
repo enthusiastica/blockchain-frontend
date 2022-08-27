@@ -34,44 +34,39 @@ function App() {
 
 	function formSubmitted(e) {
 		e.preventDefault();
-		const premium = e.target.premium.value
 		const district = e.target.district.value
 
 		contract.registerFarmer(district)
 			.then(d => {
-				console.log(d)
-				contract.payPremium({value:ethers.utils.parseEther(premium)})
-					.then(d => {
-						console.log(d)
-						hideAll();
-						setShow1(true);
-						autoHide(setShow1);
-					})
-					.catch(e => {
-						console.log(e);
-						hideAll();
-						setShowErr1(true);
-						autoHide(setShowErr1);
-					});
+				alert("farmer registered");
 			})
 			.catch(e => {
-				console.log(e);
+				alert("unable to register")
+			});
+	}
+
+	function applyScheme() {
+		const premium = document.getElementById("premium").value;
+		contract.payPremium({ value: ethers.utils.parseEther(premium) })
+			.then(d => {
+				hideAll();
+				setShow1(true);
+				autoHide(setShow1);
+			})
+			.catch(e => {
 				hideAll();
 				setShowErr1(true);
 				autoHide(setShowErr1);
 			});
 	}
-
 	function requestClaim() {
 		contract.claimInsurance()
 			.then(d => {
-				console.log(d)
 				hideAll();
 				setShow2(true);
 				autoHide(setShow2);
 			})
 			.catch(e => {
-				console.log(e);
 				hideAll();
 				setShowErr2(true);
 				autoHide(setShowErr2);
@@ -111,7 +106,9 @@ function App() {
 			showErr2 ?
 				<Alert variant="warning" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setShowErr2(false)} dismissible>
 					<Alert.Heading className="px-5 m-0">Unable to request for claim</Alert.Heading>
-					<p className='px-5 m-0'></p>
+					<p className='px-5 m-0'>
+						<strong>Can't claim now wait 3 years.</strong>
+					</p>
 				</Alert>
 				:
 				""
@@ -123,26 +120,32 @@ function App() {
 				</center>
 				<h3 className='text-secondary border-bottom pb-4 mb-4'>INSURANCE SCHEME</h3>
 				<form onSubmit={formSubmitted}>
-					<div className="input-group mb-4">
-						<label htmlFor="premium" className="input-group-text">Premium ₹</label>
-						<input type="number" id="premium" name="premium" className="form-control" />
+					<div className=' mb-4'>
+						<label htmlFor="district" className="form-label">Select District</label>
+						<input className="form-control" autoComplete='false' list="districtOptions" id="district" name="district" placeholder="Type to search..." />
+						<datalist id="districtOptions" >
+							{
+								districts.map((district, key) => {
+									return <option key={key} value={district} />
+								})
+							}
+						</datalist>
 					</div>
-					<label htmlFor="district" className="form-label">Select District</label>
-					<input className="form-control" autoComplete='false' list="districtOptions" id="district" name="district" placeholder="Type to search..." />
-					<datalist id="districtOptions" >
-						{
-							districts.map((district, key) => {
-								return <option key={key} value={district} />
-							})
-						}
-					</datalist>
+					<div className="input-group">
+						<label htmlFor="premium" className="input-group-text">Premium ₹</label>
+						<input type="numbert" id="premium" name="premium" className="form-control" />
+					</div>
 					<br />
 					<div className='mt-sm-4 text-center text-sm-start'>
-						<button className="btn btn-outline-dark border m-3 m-sm-0 me-sm-4" type="submit">
+						<button className="btn btn-outline-dark border m-3 m-sm-0 me-sm-4">
+							Register
+						</button>
+
+						<button type='button' onClick={applyScheme} className="btn btn-outline-dark border m-3 m-sm-0 me-sm-4">
 							Apply Scheme
 						</button>
 
-						<button type='button' onClick={requestClaim} className="btn btn-outline-dark border">
+						<button type='button' onClick={requestClaim} className="btn btn-outline-primary border">
 							Request Claim
 						</button>
 					</div>
