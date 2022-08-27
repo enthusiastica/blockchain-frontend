@@ -9,12 +9,12 @@ import reportWebVitals from './reportWebVitals';
 import { ethers } from 'ethers';
 import abi from './abi.json' // change it only if backend is updated
 
-const contract_address = "0xaa09D7E6f43d21D6ac5f1DCC9C66cee6Abe56b85"; // add address in single or double quotes ("", '')
-
-window.onload = connect;
+const contract_address = "0x1A2B5e4a6D75d331034196a01011C5a217C74D9d"; // add address in single or double quotes ("", '')
 
 var contract;
 var userAddress;
+
+window.onload = connect;
 
 async function connect() {
 	const { ethereum } = window;
@@ -45,9 +45,9 @@ async function connect() {
 		console.log(contract);
 
 		// let op1 = await contract.setDay(1);
-		let op2 = await contract.c_day();
+		// let op2 = await contract.c_day();
 		// console.log("setDay: ", op1);
-		console.log("c_day : ", op2);
+		// console.log("c_day : ", op2);
 	} catch (e) {
 		// alert(e)
 		console.log("error: ", e);
