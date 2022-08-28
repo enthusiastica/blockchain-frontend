@@ -11,138 +11,124 @@ import { contract } from './index';
 let districts = ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"];
 
 function App() {
-	const [show1, setShow1] = useState(false);
-	const [show2, setShow2] = useState(false);
+	const [alert, setAlert] = useState(false);
+	const [heading, setHeading] = useState("");
+	const [text, setText] = useState("");
+	const [type, setType] = useState("");
+	const [timeout, setTime] = useState("");
 
-	const [showErr1, setShowErr1] = useState(false);
-	const [showErr2, setShowErr2] = useState(false);
 
 	var showAlertDuration = 5000;
 
-	function autoHide(alert) {
-		setTimeout((alert) => {
-			alert(false);
-		}, showAlertDuration, alert);
+	function setAlertComponent(heading, text, type) {
+		setHeading(heading);
+		setText(text);
+		setType(type);
+
+		setAlert(true);
+		autoHide();
 	}
 
-	function hideAll() {
-		setShow1(false);
-		setShow2(false);
-		setShowErr1(false);
-		setShowErr2(false);
+	function autoHide() {
+		clearInterval(timeout);
+		setTime(setTimeout((alert) => {
+			alert(false);
+		}, showAlertDuration, setAlert));
 	}
 
 	function formSubmitted(e) {
 		e.preventDefault();
-		const premium = e.target.premium.value
-		const district = e.target.district.value
+		const district = e.target.district
 
-		contract.registerFarmer(district)
-			.then(d => {
-				console.log(d)
-				contract.payPremium({value:ethers.utils.parseEther(premium)})
-					.then(d => {
-						console.log(d)
-						hideAll();
-						setShow1(true);
-						autoHide(setShow1);
-					})
-					.catch(e => {
-						console.log(e);
-						hideAll();
-						setShowErr1(true);
-						autoHide(setShowErr1);
-					});
-			})
-			.catch(e => {
-				console.log(e);
-				hideAll();
-				setShowErr1(true);
-				autoHide(setShowErr1);
-			});
+		if (districts.includes(district.value)) {
+			contract.registerFarmer(district.value)
+				.then(d => {
+					setAlertComponent("Farmer registered", "", "success");
+				})
+				.catch(e => {
+					let error = e.error.data.message.split(": ")[1];
+					console.log(error)
+					setAlertComponent("Unable to register", error, "warning");
+				});
+		} else {
+			setAlertComponent("Please Select Available District", "", "danger");
+			district.focus();
+		}
+
 	}
 
+	function applyScheme() {
+		const premium = document.getElementById("premium");
+		if (premium.value) {
+			contract.payPremium({ value: ethers.utils.parseEther(premium.value) })
+				.then(d => {
+					setAlertComponent("Successfully applied to scheme", "", "success");
+				})
+				.catch(e => {
+					let error = e.error.data.message.split(": ")[1];
+					console.log(error)
+					setAlertComponent("Problem to apply a scheme", error, "warning");
+				});
+		} else {
+			setAlertComponent("Please enter Premium first", "", "danger");
+			premium.focus();
+		}
+	}
 	function requestClaim() {
 		contract.claimInsurance()
 			.then(d => {
-				console.log(d)
-				hideAll();
-				setShow2(true);
-				autoHide(setShow2);
+				setAlertComponent("Congratulations, Claim is successfully send to you", "", "success");
 			})
 			.catch(e => {
-				console.log(e);
-				hideAll();
-				setShowErr2(true);
-				autoHide(setShowErr2);
+				let error = e.error.data.message.split(": ")[1];
+				console.log(error)
+				setAlertComponent("Unable to request for claim", error, "warning");
 			});
 	}
 
 	return (<>
 		{
-			show1 ?
-				<Alert variant="success" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setShow1(false)} dismissible>
-					<Alert.Heading className="px-5 m-0">Scheme Applied Successfully</Alert.Heading>
-					<p className='px-5 m-0'></p>
-				</Alert>
-				:
-				""
-		}
-		{
-			showErr1 ?
-				<Alert variant="warning" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setShowErr1(false)} dismissible>
-					<Alert.Heading className="px-5 m-0">Unable to pay premium</Alert.Heading>
-					<p className='px-5 m-0'></p>
-				</Alert>
-				:
-				""
-		}
-
-		{
-			show2 ?
-				<Alert variant="info" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setShow2(false)} dismissible>
-					<Alert.Heading className="px-5 m-0">Requested For Claim</Alert.Heading>
-					<p className='px-5 m-0'></p>
-				</Alert>
-				:
-				""
-		}
-		{
-			showErr2 ?
-				<Alert variant="warning" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setShowErr2(false)} dismissible>
-					<Alert.Heading className="px-5 m-0">Unable to request for claim</Alert.Heading>
-					<p className='px-5 m-0'></p>
+			alert ?
+				<Alert variant={type} id="alert" style={{ position: "fixed", top: "0px", left: "0px", right: "0px" }} onClose={() => setAlert(false)} dismissible>
+					<Alert.Heading className="px-5 m-0">{heading}</Alert.Heading>
+					<p className='px-5 m-0'>{text}</p>
 				</Alert>
 				:
 				""
 		}
 		<div className="main py-5">
 			<div className="child py-4 px-2 p-sm-5">
-				<center>
-					<img src={ciondigital} alt="ciondigital" className="w-25 mb-5" />
+				<center className="logo">
+					<img src={ciondigital} alt="ciondigital" className="mb-5" />
 				</center>
 				<h3 className='text-secondary border-bottom pb-4 mb-4'>INSURANCE SCHEME</h3>
 				<form onSubmit={formSubmitted}>
-					<div className="input-group mb-4">
-						<label htmlFor="premium" className="input-group-text">Premium ₹</label>
-						<input type="number" id="premium" name="premium" className="form-control" />
+					<div className=' mb-4'>
+						<label htmlFor="district" className="form-label">Select District</label>
+						<input className="form-control" autoComplete='false' list="districtOptions" id="district" name="district" placeholder="Type to search..." />
+						<datalist id="districtOptions" >
+							{
+								districts.map((district, key) => {
+									return <option key={key} value={district} />
+								})
+							}
+						</datalist>
 					</div>
-					<label htmlFor="district" className="form-label">Select District</label>
-					<input className="form-control" autoComplete='false' list="districtOptions" id="district" name="district" placeholder="Type to search..." />
-					<datalist id="districtOptions" >
-						{
-							districts.map((district, key) => {
-								return <option key={key} value={district} />
-							})
-						}
-					</datalist>
+					<div className="input-group">
+						<label htmlFor="premium" className="input-group-text">Premium ₹</label>
+						<input type="numbert" id="premium" name="premium" className="form-control" />
+					</div>
 					<br />
-					<div className='mt-sm-4 text-center text-sm-start'>
-						<button className="btn btn-outline-dark border m-3 m-sm-0 me-sm-4" type="submit">
+					<div className='mt-sm-4 text-center text-sm-center'>
+						<button className="btn btn-outline-dark border m-3 m-sm-0 me-sm-4">
+							Register
+						</button>
+
+						<button type='button' onClick={applyScheme} className="btn btn-outline-primary border m-3 m-sm-0 me-sm-4">
 							Apply Scheme
 						</button>
 
-						<button type='button' onClick={requestClaim} className="btn btn-outline-dark border">
+						<button type='button' onClick={requestClaim} className="btn btn-outline-success border">
 							Request Claim
 						</button>
 					</div>
