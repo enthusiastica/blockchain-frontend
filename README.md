@@ -1,4 +1,4 @@
-# Made with ❤️ by group **Illuminates NoSleep gang**
+# Made with ❤️ by **Illuminates NoSleep Gang**
 <br>
 Credits
 
