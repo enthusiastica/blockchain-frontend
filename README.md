@@ -1,10 +1,4 @@
-# Made with ❤️ by **Illuminates NoSleep Gang**
-<br>
-Credits
+# Simple Blockchain Frontend Project
 
-*   [Sumit Kawale](https://github.com/sumitkawale)
-*   [Onkar Swami](https://github.com/omiswami99)
-*   [Siddhesh Dhinge](https://github.com/SiddheshDhinge)
-*   [Jayesh Kowale](https://github.com/jayeshkowale)
+![GitHub Logo](./blockchain-frontend/src/img/coin%20digital.png)
 
- ~For Cion Digital
